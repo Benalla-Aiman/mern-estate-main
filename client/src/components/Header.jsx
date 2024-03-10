@@ -9,7 +9,6 @@ import logo from '../assets/logo_header.png'
 export default function Header() {
   const { currentUser } = useSelector((state) => state.user);
   const [searchTerm, setSearchTerm] = useState('');
-  const [user,setUser]= useState();
   const navigate = useNavigate();
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -18,12 +17,6 @@ export default function Header() {
     const searchQuery = urlParams.toString();
     navigate(`/search?${searchQuery}`);
   };
-  function fetchUser(){
-    setUser(JSON.parse(localStorage.getItem("User")));
-  }
-  useEffect(()=>{
-    fetchUser();
-  },[])
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
     const searchTermFromUrl = urlParams.get('searchTerm');
@@ -52,7 +45,7 @@ export default function Header() {
             <FaSearch className='text-slate-600' />
           </button>
         </form>
-        <ul className='flex gap-4'>
+        <ul className='flex gap-x-4 justify-end grow'>
           <Link to='/'>
             <li className='hidden sm:inline text-slate-700 hover:underline'>
               Home
@@ -63,23 +56,22 @@ export default function Header() {
               About
             </li>
           </Link>
-          <Link to='/profile'>
             {currentUser ? (
-              <div className="flex flex-row gap-x-4">
-              <span className="userInfo">
-                <p className="text-sm">{user?.email}</p>
-                <p className="text-sm">{user?.Role}</p>
-              </span>
-              <img
-                className='rounded-full h-7 w-7 object-cover'
-                src={currentUser.avatar}
-                alt='profile'
-              />
+              <div className="flex flex-row items-center text-center justify-center gap-x-4">
+                <Link to='/container'>
+                  <img
+                    className='rounded-full h-7 w-7 object-cover'
+                    src={currentUser.avatar}
+                    alt='profile'
+                  />
+                </Link>
+                <span className="userInfo">
+                  <p className="text-sm">{currentUser?.email} - {currentUser?.Role}</p>
+                </span>
               </div>
             ) : (
-              <li className=' text-slate-700 hover:underline'> Sign in</li>
+              <Link to='/sign-in'><li className=' text-slate-700 hover:underline'> Sign in</li></Link>
             )}
-          </Link>
         </ul>
       </div>
     </header>

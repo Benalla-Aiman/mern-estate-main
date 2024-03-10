@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useRef, useState, useEffect } from 'react';
 import {
@@ -17,18 +18,19 @@ import {
   signOutUserStart,
 } from '../redux/user/userSlice';
 import { useDispatch } from 'react-redux';
-import { Link } from 'react-router-dom';
-export default function Profile() {
-  const fileRef = useRef(null);
-  const { currentUser, loading, error } = useSelector((state) => state.user);
-  const [file, setFile] = useState(undefined);
-  const [filePerc, setFilePerc] = useState(0);
-  const [fileUploadError, setFileUploadError] = useState(false);
-  const [formData, setFormData] = useState({});
-  const [updateSuccess, setUpdateSuccess] = useState(false);
-  const [showListingsError, setShowListingsError] = useState(false);
-  const [userListings, setUserListings] = useState([]);
-  const dispatch = useDispatch();
+import { useNavigate } from 'react-router-dom';
+const Profile = () => {
+    const navigate = useNavigate();
+    const fileRef = useRef(null);
+    const { currentUser, loading, error } = useSelector((state) => state.user);
+    const [file, setFile] = useState(undefined);
+    const [filePerc, setFilePerc] = useState(0);
+    const [fileUploadError, setFileUploadError] = useState(false);
+    const [formData, setFormData] = useState({});
+    const [updateSuccess, setUpdateSuccess] = useState(false);
+    const [showListingsError, setShowListingsError] = useState(false);
+    const [userListings, setUserListings] = useState([]);
+    const dispatch = useDispatch();
 
   // firebase storage
   // allow read;
@@ -36,11 +38,11 @@ export default function Profile() {
   // request.resource.size < 2 * 1024 * 1024 &&
   // request.resource.contentType.matches('image/.*')
 
-  useEffect(() => {
+useEffect(() => {
     if (file) {
-      handleFileUpload(file);
+    handleFileUpload(file);
     }
-  }, [file]);
+}, [file]);
 
   const handleFileUpload = (file) => {
     const storage = getStorage(app);
@@ -86,7 +88,6 @@ export default function Profile() {
         dispatch(updateUserFailure(data.message));
         return;
       }
-
       dispatch(updateUserSuccess(data));
       setUpdateSuccess(true);
     } catch (error) {
@@ -121,6 +122,8 @@ export default function Profile() {
         return;
       }
       dispatch(deleteUserSuccess(data));
+      navigate("/sign-in")
+      localStorage.clear()
     } catch (error) {
       dispatch(deleteUserFailure(data.message));
     }
@@ -135,7 +138,6 @@ export default function Profile() {
         setShowListingsError(true);
         return;
       }
-
       setUserListings(data);
     } catch (error) {
       setShowListingsError(true);
@@ -160,9 +162,8 @@ export default function Profile() {
       console.log(error.message);
     }
   };
-  return (
-    <div className='p-3 max-w-lg mx-auto'>
-      <h1 className='text-3xl font-semibold text-center my-7'>Profile</h1>
+    return ( <div className="w-2/5 mx-auto">
+        <h1 className='text-3xl font-semibold text-center my-7'>Profile</h1>
       <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
         <input
           onChange={(e) => setFile(e.target.files[0])}
@@ -237,7 +238,6 @@ export default function Profile() {
           Sign out
         </span>
       </div>
-
       <p className='text-red-700 mt-5'>{error ? error : ''}</p>
       <p className='text-green-700 mt-5'>
         {updateSuccess ? 'User is updated successfully!' : ''}
@@ -248,7 +248,6 @@ export default function Profile() {
       <p className='text-red-700 mt-5'>
         {showListingsError ? 'Error showing listings' : ''}
       </p>
-
       {userListings && userListings.length > 0 && (
         <div className='flex flex-col gap-4'>
           <h1 className='text-center mt-7 text-2xl font-semibold'>
@@ -272,7 +271,6 @@ export default function Profile() {
               >
                 <p>{listing.name}</p>
               </Link>
-
               <div className='flex flex-col item-center'>
                 <button
                   onClick={() => handleListingDelete(listing._id)}
@@ -288,6 +286,7 @@ export default function Profile() {
           ))}
         </div>
       )}
-    </div>
-  );
+    </div> );
 }
+ 
+export default Profile;
